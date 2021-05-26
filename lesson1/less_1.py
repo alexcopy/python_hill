@@ -3,9 +3,11 @@ from django.conf import settings
 from django.core.management import execute_from_command_line
 from django.urls import path
 from django.http import HttpResponse
+import django_heroku
 from random import choice
 import this
 
+django_heroku.settings(locals())
 ROOT_URLCONF = __name__
 DEBUG = True
 SECRET_KEY = "sdasdas"
