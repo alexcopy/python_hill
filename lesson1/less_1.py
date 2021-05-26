@@ -6,11 +6,10 @@ from django.http import HttpResponse
 from random import choice
 import this
 
-settings.configure(
-    ROOT_URLCONF=__name__,
-    DEBUG=True,
-    SECRET_KEY="sdasdas"
-)
+ROOT_URLCONF = __name__
+DEBUG = True
+SECRET_KEY = "sdasdas"
+
 template = """
 <!DOCTYPE html>
 <html>
