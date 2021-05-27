@@ -1,1 +1,1 @@
-web: gunicorn less_1.wsgi
+web: gunicorn hello:app
