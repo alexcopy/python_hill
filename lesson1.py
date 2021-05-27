@@ -43,7 +43,7 @@ def universe(_):
 
 
 urlpatterns = [
-    path('retro', universe)
+    path('', universe)
 ]
 
 if __name__ == "__main__":
