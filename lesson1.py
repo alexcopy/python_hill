@@ -3,13 +3,10 @@ from django.conf import settings
 from django.core.management import execute_from_command_line
 from django.urls import path
 from django.http import HttpResponse
-from random import choice
-import this
-settings.configure(
-    ROOT_URLCONF=__name__,
-    DEBUG=True,
-    SECRET_KEY="sdasdas"
-)
+
+ROOT_URLCONF = __name__
+DEBUG = True
+SECRET_KEY = "sdasdas"
 
 template = """
 <!DOCTYPE html>
@@ -34,13 +31,11 @@ template = """
   </body>
 </html>
 """
-text = ''.join(this.d.get(c, c) for c in this.s)
-
-title, _, *quotes = text.splitlines()
 
 
-def hey(_):
-    return HttpResponse(template.format(title=title, quote=choice(quotes), quote_two=choice(quotes)))
+# text = ''.join(this.d.get(c, c) for c in this.s)
+#
+# title, _, *quotes = text.splitlines()
 
 
 def universe(_):
@@ -48,8 +43,8 @@ def universe(_):
 
 
 urlpatterns = [
-    path('', hey),
     path('retro', universe)
 ]
 
-execute_from_command_line(sys.argv)
+if __name__ == "__main__":
+    execute_from_command_line()

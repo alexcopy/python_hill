@@ -1,1 +1,1 @@
-web: gunicorn hello:app
+web: gunicorn lesson1.wsgi --log-file -
