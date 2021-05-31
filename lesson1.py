@@ -62,7 +62,7 @@ def show_all_moduls(_):
 
 
 def methods(_, module, meth):
-    return HttpResponse(template.format(title="All modules", html=pydoc.render_doc(module + "." + meth, "Help on %s")))
+    return HttpResponse(pydoc.render_doc(module + "." + meth, "%s"))
 
 
 urlpatterns = [
