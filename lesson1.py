@@ -5,7 +5,7 @@ import pkg_resources
 from django.conf import settings
 from django.core.management import execute_from_command_line
 from django.urls import path
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 import random
 import this
 import pydoc
@@ -13,6 +13,7 @@ import pydoc
 ROOT_URLCONF = __name__
 DEBUG = True
 SECRET_KEY = "sdasdas"
+MODULES_LIST = ['random', 'sys', 'csv', 'this', 'pydoc', 'pkg_resources']
 
 template = """
 <!DOCTYPE html>
@@ -44,13 +45,14 @@ def hey(_):
 
 
 def _modules():
-    modules = ['random', 'sys', 'csv', 'this', 'pydoc', 'pkg_resources']
-    installed_packages = ["<div><a href=\"/doc/" + d + "\" > " + d + "</a></div>" for d in
-                          modules]
-    return installed_packages
+    packages = ["<div><a href=\"/doc/" + d + "\" > " + d + "</a></div>" for d in
+                MODULES_LIST]
+    return packages
 
 
 def docs(_, module):
+    if (module not in MODULES_LIST):
+        return HttpResponseNotFound('<h1>Page not found</h1>')
     getmembers = inspect.getmembers(eval(module))
     mem = ["<div><a href=\"/doc/" + module + "/" + i[0] + "\" > " + i[0] + "</a></div>" for i in getmembers if
            not i[0].startswith("_")]
