@@ -10,8 +10,8 @@ import random
 import this
 import pydoc
 
-ROOT_URLCONF = __name__,
-DEBUG = True,
+ROOT_URLCONF = __name__
+DEBUG = True
 SECRET_KEY = "sdasdas"
 
 template = """
