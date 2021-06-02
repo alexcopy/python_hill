@@ -1,3 +1,4 @@
+import importlib
 import inspect
 import sys
 import os
@@ -49,15 +50,17 @@ def hey(_):
 
 
 def _modules():
-    packages = ["<div><a href=\"/doc/" + d + "\" > " + d + "</a></div>" for d in
-                MODULES_LIST]
-    return packages
+    list = [str(m) for m in sys.modules]
+    packages=[m for m in list if not m.startswith("_") and m.find('.') == -1]
+    return ["<div><a href=\"/doc/" + d + "\" > " + d + "</a></div>" for d in packages]
 
 
 def docs(_, module):
-    if (module not in MODULES_LIST):
+    modules = [str(m) for m in sys.modules]
+    if (module not in modules):
         return HttpResponseNotFound('<h1>Page not found</h1>')
-    getmembers = dir(eval(module))
+    import_mod = importlib.import_module(module)
+    getmembers = dir(import_mod)
     mem = ["<div><a href=\"/doc/" + module + "/" + i + "\" > " + i + "</a></div>" for i in getmembers if
            not i.startswith("_")]
     return HttpResponse(template.format(title="All methods", html=''.join(mem)))
