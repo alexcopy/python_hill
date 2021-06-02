@@ -12,11 +12,11 @@ import random
 import this
 import subprocess
 
-settings.configure(
-    ROOT_URLCONF=__name__,
-    DEBUG=True,
-    SECRET_KEY="sdasdas"
-)
+
+ROOT_URLCONF=__name__
+DEBUG=True
+SECRET_KEY="sdasdas"
+
 
 MODULES_LIST = ['random', 'sys', 'csv', 'this', 'pydoc', 'pkg_resources']
 
