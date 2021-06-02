@@ -1,18 +1,22 @@
 import inspect
 import sys
+import os
 import csv
 import pkg_resources
 from django.conf import settings
 from django.core.management import execute_from_command_line
 from django.urls import path
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 import random
 import this
-import pydoc
+import subprocess
 
-ROOT_URLCONF = __name__
-DEBUG = True
-SECRET_KEY = "sdasdas"
+settings.configure(
+    ROOT_URLCONF=__name__,
+    DEBUG=True,
+    SECRET_KEY="sdasdas"
+)
+
 MODULES_LIST = ['random', 'sys', 'csv', 'this', 'pydoc', 'pkg_resources']
 
 template = """
@@ -53,9 +57,9 @@ def _modules():
 def docs(_, module):
     if (module not in MODULES_LIST):
         return HttpResponseNotFound('<h1>Page not found</h1>')
-    getmembers = inspect.getmembers(eval(module))
-    mem = ["<div><a href=\"/doc/" + module + "/" + i[0] + "\" > " + i[0] + "</a></div>" for i in getmembers if
-           not i[0].startswith("_")]
+    getmembers = dir(eval(module))
+    mem = ["<div><a href=\"/doc/" + module + "/" + i + "\" > " + i + "</a></div>" for i in getmembers if
+           not i.startswith("_")]
     return HttpResponse(template.format(title="All methods", html=''.join(mem)))
 
 
@@ -63,15 +67,29 @@ def show_all_moduls(_):
     return HttpResponse(template.format(title="All modules", html=''.join(_modules())))
 
 
-def methods(_, module, meth):
-    return HttpResponse(pydoc.render_doc(module + "." + meth, "%s"))
+def documentation(_, module, meth=""):
+    if meth == "":
+        file_html = module
+    else:
+        file_html = module + "." + meth
+    cmd = 'pydoc -w ' + file_html,
+    subprocess.check_output(cmd, shell=True).decode("ascii", errors="ignore")
+    doc_html_file = file_html + ".html"
+    if os.path.exists(doc_html_file):
+        with open(doc_html_file, "r", encoding='utf-8') as f:
+            text = f.read()
+        response = HttpResponse(template.format(title=file_html, html=text))
+        os.remove(doc_html_file)
+    else:
+        response = Http404()
+    return response
 
 
 urlpatterns = [
     path('', hey),
     path('doc', show_all_moduls),
     path('doc/<str:module>', docs),
-    path('doc/<str:module>/<str:meth>', methods),
+    path('doc/<str:module>/<str:meth>', documentation),
 ]
 
 execute_from_command_line(sys.argv)
