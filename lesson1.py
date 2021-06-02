@@ -88,6 +88,7 @@ def documentation(_, module, meth=""):
 urlpatterns = [
     path('', hey),
     path('doc', show_all_moduls),
+    path('doc/', show_all_moduls),
     path('doc/<str:module>', docs),
     path('doc/<str:module>/<str:meth>', documentation),
 ]
