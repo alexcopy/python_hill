@@ -2,9 +2,7 @@ import importlib
 import inspect
 import sys
 import os
-import csv
-import pkg_resources
-from django.conf import settings
+from pathlib import Path
 from django.core.management import execute_from_command_line
 from django.shortcuts import render
 from django.urls import path
@@ -21,7 +19,7 @@ SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.abspath(os.getcwd())],
+        'DIRS': [Path(__file__).parent.absolute()],
 
     },
 ]
