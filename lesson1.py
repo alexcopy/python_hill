@@ -21,7 +21,7 @@ SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [SETTINGS_PATH],
+        'DIRS': [os.path.abspath(os.getcwd())],
 
     },
 ]
