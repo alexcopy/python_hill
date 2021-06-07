@@ -6,52 +6,38 @@ import csv
 import pkg_resources
 from django.conf import settings
 from django.core.management import execute_from_command_line
+from django.shortcuts import render
 from django.urls import path
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 import random
 import this
 import subprocess
 
+ROOT_URLCONF = __name__
+DEBUG = True
+SECRET_KEY = "sdasdas"
 
-ROOT_URLCONF=__name__
-DEBUG=True
-SECRET_KEY="sdasdas"
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['/Users/alexredko/Projects/Python/Hillel/'],
 
+    },
+]
 
-MODULES_LIST = ['random', 'sys', 'csv', 'this', 'pydoc', 'pkg_resources']
-
-template = """
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{title}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
-  </head>
-  <body>
-  <section class="section">
-    <div class="container">
-         <div class="box">
-          {html}
-        </div>
-    </div>
-  </section>
-  </body>
-</html>
-"""
 text = ''.join(this.d.get(c, c) for c in this.s)
 
 title, _, *quotes = text.splitlines()
 
 
 def hey(_):
-    return HttpResponse(template.format(title=title, html=random.choice(quotes)))
+    return render(_, 'index.html', {'html': random.choice(quotes), 'template': TEMPLATES})
 
 
 def _modules():
     list = [str(m) for m in sys.modules]
-    packages=[m for m in list if not m.startswith("_") and m.find('.') == -1]
+    packages = [m for m in list if not m.startswith("_") and m.find('.') == -1]
     return ["<div><a href=\"/doc/" + d + "\" > " + d + "</a></div>" for d in packages]
 
 
@@ -63,11 +49,11 @@ def docs(_, module):
     getmembers = dir(import_mod)
     mem = ["<div><a href=\"/doc/" + module + "/" + i + "\" > " + i + "</a></div>" for i in getmembers if
            not i.startswith("_")]
-    return HttpResponse(template.format(title="All methods", html=''.join(mem)))
+    return render(_, 'clean.html', {'html': ''.join(mem), 'template': TEMPLATES})
 
 
 def show_all_moduls(_):
-    return HttpResponse(template.format(title="All modules", html=''.join(_modules())))
+    return render(_, 'index.html', {'html': ''.join(_modules()), 'template': TEMPLATES})
 
 
 def documentation(_, module, meth=""):
@@ -81,11 +67,12 @@ def documentation(_, module, meth=""):
     if os.path.exists(doc_html_file):
         with open(doc_html_file, "r", encoding='utf-8') as f:
             text = f.read()
-        response = HttpResponse(template.format(title=file_html, html=text))
+        response = render(_, 'clean.html', {'html': text, 'template': TEMPLATES})
         os.remove(doc_html_file)
     else:
         response = Http404()
     return response
+
 
 
 urlpatterns = [
