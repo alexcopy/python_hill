@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block content %}
+
+
+<div class="columns">
+    <div class="column is-mobile">
+        <form action="" method="post">
+            <label class="label">Paste URL to make it short</label>
+            <div class="field is-grouped">
+                <div class="control">
+                    <input class="input" name="url" type="text" placeholder="URL input">
+                </div>
+                <div class="control">
+                    <button class="button is-primary">Make it short !</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="column is-mobile">
+        <label class="label">Short URL:</label>
+        <a href="/{{ url }}" target="_blank">{{slug_url}}</a>
+    </div>
+</div>
+
+{% endblock %}

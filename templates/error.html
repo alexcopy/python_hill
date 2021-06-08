@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="column">
+    <button class="button is-rounded" onclick=javascript:window.history.back()>
+        <span class="icon">
+      <i class="fas fa-arrow-right"> </i>
+    </span>
+        <span>Go Back and Fix it :)</span>
+    </button>
+</div>
+
+{{error | safe}}
+
+<h2 class="subtitle">{{desc}}</h2>
+
+{% endblock %}
