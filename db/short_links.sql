@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS short_links (
+  `id` int(11) PRIMARY KEY AUTO_INCREMENT,
+  `rnd_key` varchar(255) NOT NULL UNIQUE ,
+  `url_str` varchar(255) NOT NULL,
+  `Disabled` tinyint(4)  DEFAULT 0,
+  `LogTime` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

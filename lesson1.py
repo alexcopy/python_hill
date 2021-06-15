@@ -2,11 +2,10 @@ import importlib
 import logging
 import re
 import string
-import hashlib
 import sys
 import os
 from pathlib import Path
-
+from dotenv import dotenv_values
 from django.conf import settings
 from django.core.management import execute_from_command_line
 from django.shortcuts import render, redirect
@@ -15,26 +14,27 @@ from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpRespons
 import random
 import this
 import subprocess
+import db.dbconn as dbconn
 
-ROOT_URLCONF = __name__
-DEBUG = True
-SECRET_KEY = "sdasdas"
-
+# ROOT_URLCONF = __name__
+# DEBUG = True
+# SECRET_KEY = "sdasdas"
 
 URLS_MAP = {}
 SHR_RND = 5
+DOT_ENV = dotenv_values(".env")
+APP_PATH = Path(__file__).parent.absolute()
 
-log_file = 'processing.log'
+log_file = DOT_ENV['LOG_FILE']
 level = logging.DEBUG
 log_format = '%(asctime)s : %(levelname)s : %(message)s'
-logs_dir = 'logs'
+logs_dir = DOT_ENV['LOG_DIR']
 
 Path(logs_dir).mkdir(parents=True, exist_ok=True)
 handlers = [logging.FileHandler(logs_dir + '/' + log_file), logging.StreamHandler()]
 logging.basicConfig(level=level, format=log_format, handlers=handlers)
 
 
-APP_PATH = Path(__file__).parent.absolute()
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -97,14 +97,13 @@ def documentation(_, module, meth=""):
 
 
 def short_links(request):
-    slug_url = None
     try:
         if request.method == 'POST' and re.match(r"^(http|ftp)s?://", request.POST.get('url', '')):
-            rnd_key = _rnd_string(5, 5)
             url = request.POST.get('url', '')
             host = re.search("^(?P<req>(http|ftp)s?\\:\\/\\/[^\\/]+)\\/", url).group('req')
+            rnd_key = _rnd_string(5, 5)
             slug_url = host + "/" + rnd_key
-            # hashed_url = hashlib.md5(slug_url.encode()).hexdigest()
+            dbconn.insert_data(rnd_key, url)
             URLS_MAP[rnd_key] = {'short': slug_url, 'long': url}
         elif request.method == 'GET':
             return render(request, 'short_urls.html', {'template': TEMPLATES})
@@ -121,14 +120,24 @@ def short_links(request):
 
 
 def shorturl(request, key):
-    if request.method == 'GET' and key in URLS_MAP:
+    if request.method == 'GET' and len(dbconn.get_key_from_db(key)) == 1:
         return redirect(URLS_MAP[key]['long'])
     return redirect('index')
 
 
+def test(_):
+    rnd = _rnd_string(5, 5)
+    dbconn.insert_data(rnd, "sadasdas")
+    return render(_, 'docs.html', {'html': random.choice(quotes), 'template': TEMPLATES})
+
+
+dbconn.create_db()
+dbconn.mysql_db_create_tbl()
+
 urlpatterns = [
 
     path('', single_quote, name='index'),
+    path('test', test, name='test'),
     path('quote', single_quote),
     path('short', short_links),
     path('doc', show_all_moduls),
