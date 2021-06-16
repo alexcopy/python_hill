@@ -100,7 +100,6 @@ def short_links(request):
     try:
         if request.method == 'POST' and re.match(r"^(http|ftp)s?://", request.POST.get('url', '')):
             url = request.POST.get('url', '')
-            # host = re.search("^(?P<req>(http|ftp)s?\\:\\/\\/[^\\/]+)\\/", url).group('req')
             rnd_key = _rnd_string(5, 5)
             slug_url = DOT_ENV['APP_URL'] + "/" + rnd_key
             dbconn.insert_data(rnd_key, url)
@@ -127,20 +126,12 @@ def shorturl(request, key):
         return redirect(url_pair[key])
     return redirect('index')
 
-
-def test(_):
-    rnd = _rnd_string(5, 5)
-    dbconn.insert_data(rnd, "sadasdas")
-    return render(_, 'docs.html', {'html': random.choice(quotes), 'template': TEMPLATES})
-
-
 dbconn.create_db()
 dbconn.mysql_db_create_tbl()
 
 urlpatterns = [
 
     path('', single_quote, name='index'),
-    path('test', test, name='test'),
     path('quote', single_quote),
     path('short', short_links),
     path('doc', show_all_moduls),
