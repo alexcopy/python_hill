@@ -119,8 +119,12 @@ def short_links(request):
 
 
 def shorturl(request, key):
-    if request.method == 'GET' and len(dbconn.get_key_from_db(key)) == 1:
-        return redirect(URLS_MAP[key]['long'])
+    if len(key) > 5:
+        return ''
+
+    url_pair = dbconn.get_key_from_db(key)
+    if request.method == 'GET' and len(url_pair) == 1:
+        return redirect(url_pair[key])
     return redirect('index')
 
 
@@ -143,7 +147,7 @@ urlpatterns = [
     path('doc/', show_all_moduls),
     path('doc/<str:module>', docs),
     path('doc/<str:module>/<str:meth>', documentation),
-    re_path(r'(?P<key>\w{5})', shorturl, name='shorturl'),
+    re_path(r'(?P<key>\w{5,5}$)', shorturl, name='shorturl'),
 
 ]
 

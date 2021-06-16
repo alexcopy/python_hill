@@ -1,9 +1,9 @@
 import mysql.connector
 from dotenv import dotenv_values
 from pathlib import Path
-APP_PATH = Path(__file__).parent.absolute()
 
-DOT_ENV = dotenv_values(APP_PATH.joinpath(".env"))
+APP_PATH = Path(__file__).parent.absolute()
+DOT_ENV = dotenv_values(APP_PATH.parent.joinpath(".env"))
 CREATE_DB = "CREATE DATABASE IF NOT EXISTS  {} "
 SELECT = "SELECT rnd_key, url_str  FROM `short_links` WHERE rnd_key= '{}'; "
 INSERT = "INSERT  INTO  `short_links` (rnd_key, url_str) VALUES ('{}', '{}');"
@@ -14,7 +14,7 @@ DB_VARS = {'host': DOT_ENV['DB_HOST'], 'user': DOT_ENV['DB_USERNAME'],
 def mysql_db_create_tbl():
     DB_VARS.update({'db': DOT_ENV['DB_DATABASE']})
     cur = mysql.connector.connect(**DB_VARS)
-    with open(APP_PATH.joinpath('db/short_links.sql')) as f:
+    with open(APP_PATH.joinpath('short_links.sql')) as f:
         cur.cursor().execute(f.read().replace('\n', ''))
     cur.commit()
     cur.close()
