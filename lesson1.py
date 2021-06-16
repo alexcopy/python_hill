@@ -23,7 +23,7 @@ SECRET_KEY = "sdasdas"
 APP_PATH = Path(__file__).parent.absolute()
 URLS_MAP = {}
 SHR_RND = 5
-DOT_ENV = dotenv_values(APP_PATH+"/.env")
+DOT_ENV = dotenv_values(APP_PATH.joinpath(".env"))
 
 log_file = DOT_ENV['LOG_FILE']
 level = logging.DEBUG
