@@ -16,14 +16,14 @@ import this
 import subprocess
 import db.dbconn as dbconn
 
-# ROOT_URLCONF = __name__
-# DEBUG = True
-# SECRET_KEY = "sdasdas"
+ROOT_URLCONF = __name__
+DEBUG = True
+SECRET_KEY = "sdasdas"
 
+APP_PATH = Path(__file__).parent.absolute()
 URLS_MAP = {}
 SHR_RND = 5
-DOT_ENV = dotenv_values(".env")
-APP_PATH = Path(__file__).parent.absolute()
+DOT_ENV = dotenv_values(APP_PATH+"/.env")
 
 log_file = DOT_ENV['LOG_FILE']
 level = logging.DEBUG
@@ -100,11 +100,10 @@ def short_links(request):
     try:
         if request.method == 'POST' and re.match(r"^(http|ftp)s?://", request.POST.get('url', '')):
             url = request.POST.get('url', '')
-            host = re.search("^(?P<req>(http|ftp)s?\\:\\/\\/[^\\/]+)\\/", url).group('req')
+            # host = re.search("^(?P<req>(http|ftp)s?\\:\\/\\/[^\\/]+)\\/", url).group('req')
             rnd_key = _rnd_string(5, 5)
-            slug_url = host + "/" + rnd_key
+            slug_url = DOT_ENV['APP_URL'] + "/" + rnd_key
             dbconn.insert_data(rnd_key, url)
-            URLS_MAP[rnd_key] = {'short': slug_url, 'long': url}
         elif request.method == 'GET':
             return render(request, 'short_urls.html', {'template': TEMPLATES})
         else:
