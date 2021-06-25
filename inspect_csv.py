@@ -5,8 +5,8 @@ from typing import Dict, Union
 from dateutil import parser as date_parser
 from datetime import datetime
 
-model_path = '/Users/alexredko/Projects/Python/Hillel/model.py'
-csv_file = '/Users/alexredko/Documents/test_csv.csv'
+model_path = 'model.py'
+csv_file = 'test_csv.csv'
 
 reader = csv.DictReader(open(csv_file))
 # fieldnames = dict.fromkeys(reader.fieldnames, "CharField(max_length=291)")
