@@ -1,12 +1,14 @@
 import re
 import os
-import csv
+import csv, sys
 from typing import Dict, Union
 from dateutil import parser as date_parser
 from datetime import datetime
 
 model_path = 'model.py'
-csv_file = 'test_csv.csv'
+csv_file = sys.argv[1].strip()
+if not csv_file:
+    csv_file = input("Please enter path to CSV file with data: ").strip()
 
 reader = csv.DictReader(open(csv_file))
 # fieldnames = dict.fromkeys(reader.fieldnames, "CharField(max_length=291)")
@@ -21,6 +23,7 @@ list_data = list(reader)
 def to_camel_case(snake_str):
     components = snake_str.split('_')
     return components[0] + ''.join(x.title() for x in components[1:])
+
 
 def to_snake_case(name):
     name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -114,7 +117,6 @@ for i in field_types:
 
 with open(model_path, "w") as f:
     f.write(data)
-
 
 # TextField()
 # URLField
