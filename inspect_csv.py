@@ -6,19 +6,19 @@ from dateutil import parser as date_parser
 from datetime import datetime
 
 model_path = 'model.py'
-csv_file = sys.argv[1].strip()
-if not csv_file:
+try:
+    csv_file = sys.argv[1].strip()
+except:
     csv_file = input("Please enter path to CSV file with data: ").strip()
 
+if not os.path.isfile(csv_file):
+    raise FileNotFoundError
+
 reader = csv.DictReader(open(csv_file))
-# fieldnames = dict.fromkeys(reader.fieldnames, "CharField(max_length=291)")
 fieldnames = dict.fromkeys(reader.fieldnames)
 field_types = {}
 unchecked_list = {}
-
 field_types: Dict[str, Dict[str, Union[None, int, bool]]] = {}
-list_data = list(reader)
-
 
 def to_camel_case(snake_str):
     components = snake_str.split('_')
@@ -64,7 +64,7 @@ for i in fieldnames:
     fieldnames[i] = []
     field_types[i] = {"Type": "", "length": 0, 'nullable': False}
 d = {}
-for row in list_data:
+for row in reader:
     for k in fieldnames:
         field_type = field_types[k]
         cel_val = row[k].strip()
@@ -79,13 +79,13 @@ for row in list_data:
                 'max_length=' + str(field_type["length"]) + ', blank=' + str(field_type['nullable']))
 
 
-        elif cel_val.isdigit():
+        elif re.match(r"-?\d+$", cel_val):
             field_type['Type'] = "IntegerField({})".format('blank=' + str(field_type['nullable']))
             cel_val = int(cel_val)
             field_type["length"] = cel_val if cel_val > field_type["length"] else field_type["length"]
             fieldnames[k].append(cel_val)
 
-        elif cel_val.isdecimal():
+        elif re.match(r"-?\d+\.\d+$", cel_val):
             field_type['Type'] = "FloatField({})".format('blank=' + str(field_type['nullable']))
             cel_val = float(cel_val)
             field_type["length"] = cel_val if cel_val > field_type["length"] else field_type["length"]
